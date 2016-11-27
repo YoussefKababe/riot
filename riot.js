@@ -1164,8 +1164,8 @@ function updateExpression(expr) {
     return
   }
 
-  if (old === value) { return }
   if (expr.isRtag && value) { return updateDataIs(expr, this) }
+  if (old === value) { return }
   // no change, so nothing more to do
   if (isValueAttr && dom.value === value) { return }
 
@@ -2234,6 +2234,12 @@ function Tag$$1(impl, conf, innerHTML) {
       tagIndex = __TAGS_CACHE.indexOf(this);
 
     this.trigger('before-unmount');
+
+    // clear all attributes coming from the mounted tag
+    walkAttrs(impl.attrs, function (name) {
+      if (name === 'riot-style') { remAttr(root, 'style'); }
+      else { remAttr(root, name); }
+    });
 
     // remove this tag instance from the global virtualDom variable
     if (~tagIndex)
